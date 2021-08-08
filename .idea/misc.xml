@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Dobble_projekt/app/src/main/res/drawable/bluetooth_off.xml" value="0.2703125" />
+        <entry key="..\:/Dobble_projekt/app/src/main/res/drawable/bluetooth_on.xml" value="0.2703125" />
         <entry key="..\:/Dobble_projekt/app/src/main/res/layout/activity_main.xml" value="0.2346014492753623" />
         <entry key="..\:/Dobble_projekt/app/src/main/res/layout/fragment_choose_game.xml" value="0.24010416666666667" />
         <entry key="..\:/Dobble_projekt/app/src/main/res/layout/fragment_online_menu.xml" value="0.25416666666666665" />

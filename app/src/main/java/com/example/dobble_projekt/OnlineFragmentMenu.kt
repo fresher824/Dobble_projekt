@@ -1,59 +1,55 @@
 package com.example.dobble_projekt
 
+import android.bluetooth.BluetoothAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
+import com.example.dobble_projekt.databinding.FragmentOnlineMenuBinding
+import com.google.android.material.snackbar.Snackbar
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [OnlineFragmentMenu.newInstance] factory method to
- * create an instance of this fragment.
- */
 class OnlineFragmentMenu : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    lateinit var bluetoothAdapter: BluetoothAdapter
+    private lateinit var binding: FragmentOnlineMenuBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_online_menu, container, false)
+        binding = FragmentOnlineMenuBinding.inflate(inflater, container, false)
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter.isEnabled)
+        {
+            val img: ImageView = binding.bluetoothView
+            img.setImageResource(R.drawable.bluetooth_on)
+        }
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment OnlineFragmentMenu.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            OnlineFragmentMenu().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.bluetoothView.setOnClickListener {
+            updateBTImage()
+        }
     }
+
+    private fun updateBTImage(){
+        val img: ImageView = binding.bluetoothView
+        if (bluetoothAdapter.isEnabled)
+        {
+            Snackbar.make(binding.root, "Bluetooth is already on", Snackbar.LENGTH_SHORT).show()
+        }
+        else
+        {
+            Snackbar.make(binding.root, "Bluetooth is now on", Snackbar.LENGTH_SHORT).show()
+            img.setImageResource(R.drawable.bluetooth_on)
+            bluetoothAdapter.enable()
+        }
+    }
+
 }
