@@ -4,9 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Dobble_projekt/app/src/main/res/layout/activity_main.xml" value="0.2346014492753623" />
-        <entry key="..\:/Projekty/Android Studio/Dobble_projekt/app/src/main/res/layout/activity_main.xml" value="0.1793478260869565" />
-        <entry key="..\:/Projekty/Android Studio/Dobble_projekt/app/src/main/res/layout/fragment_choose_game.xml" value="0.2" />
-        <entry key="..\:/Projekty/Android Studio/Dobble_projekt/app/src/main/res/layout/fragment_online_menu.xml" value="0.2477355072463768" />
+        <entry key="..\:/Dobble_projekt/app/src/main/res/layout/fragment_choose_game.xml" value="0.24010416666666667" />
+        <entry key="..\:/Dobble_projekt/app/src/main/res/layout/fragment_online_menu.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>
