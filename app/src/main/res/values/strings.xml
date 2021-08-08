@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Dobble_projekt</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="permission_msg">Permission is required to use the application</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/chooseGameFragment">
+
+    <fragment
+        android:id="@+id/chooseGameFragment"
+        android:name="com.example.dobble_projekt.ChooseGameFragment"
+        android:label="fragment_choose_game"
+        tools:layout="@layout/fragment_choose_game" >
+        <action
+            android:id="@+id/action_chooseGameFragment_to_onlineFragmentMenu"
+            app:destination="@id/onlineFragmentMenu" />
+    </fragment>
+    <fragment
+        android:id="@+id/onlineFragmentMenu"
+        android:name="com.example.dobble_projekt.OnlineFragmentMenu"
+        android:label="fragment_online_menu"
+        tools:layout="@layout/fragment_online_menu" />
+</navigation>
