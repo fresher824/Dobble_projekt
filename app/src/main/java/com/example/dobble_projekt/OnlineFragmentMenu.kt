@@ -7,7 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.dobble_projekt.databinding.FragmentOnlineMenuBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -35,6 +36,15 @@ class OnlineFragmentMenu : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.bluetoothView.setOnClickListener {
             updateBTImage()
+        }
+        binding.createButton.setOnClickListener {
+            if (bluetoothAdapter.isEnabled)
+                findNavController().navigate(R.id.action_onlineFragmentMenu_to_deviceFragment)
+            else
+                Snackbar.make(binding.root, "Turn on bluetooth!", Snackbar.LENGTH_LONG).show()
+        }
+        binding.joinButton.setOnClickListener {
+
         }
     }
 
