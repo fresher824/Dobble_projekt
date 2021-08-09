@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.navArgs
 import com.example.dobble_projekt.databinding.FragmentDeviceBinding
 import com.example.dobble_projekt.placeholder.PlaceholderContent
 

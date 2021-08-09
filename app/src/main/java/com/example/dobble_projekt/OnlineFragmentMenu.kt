@@ -17,6 +17,7 @@ class OnlineFragmentMenu : Fragment() {
     lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var binding: FragmentOnlineMenuBinding
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
