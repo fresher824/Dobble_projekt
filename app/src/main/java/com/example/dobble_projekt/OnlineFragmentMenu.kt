@@ -40,7 +40,7 @@ class OnlineFragmentMenu : Fragment() {
         }
         binding.createButton.setOnClickListener {
             if (bluetoothAdapter.isEnabled)
-                findNavController().navigate(R.id.action_onlineFragmentMenu_to_deviceFragment)
+                findNavController().navigate(R.id.action_onlineFragmentMenu_to_deviceListFragment)
             else
                 Snackbar.make(binding.root, "Turn on bluetooth!", Snackbar.LENGTH_LONG).show()
         }

@@ -20,16 +20,12 @@
         android:label="fragment_online_menu"
         tools:layout="@layout/fragment_online_menu" >
         <action
-            android:id="@+id/action_onlineFragmentMenu_to_deviceFragment"
-            app:destination="@id/deviceFragment" />
+            android:id="@+id/action_onlineFragmentMenu_to_deviceListFragment"
+            app:destination="@id/deviceListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/deviceFragment"
-        android:name="com.example.dobble_projekt.DeviceFragment"
+        android:id="@+id/deviceListFragment"
+        android:name="com.example.dobble_projekt.DeviceListFragment"
         android:label="fragment_device_list"
-        tools:layout="@layout/fragment_device_list" >
-        <action
-            android:id="@+id/action_deviceFragment_to_onlineFragmentMenu"
-            app:destination="@id/onlineFragmentMenu" />
-    </fragment>
+        tools:layout="@layout/fragment_device_list" />
 </navigation>
