@@ -1,6 +1,11 @@
 package com.example.dobble_projekt
 
 import android.Manifest
+import android.bluetooth.BluetoothDevice
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         layoutBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layoutBinding.root)
 
+
         //Pozwolenie na dostep do lokalizaci
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -34,7 +40,9 @@ class MainActivity : AppCompatActivity() {
                 MY_PERMISSION_REQEST_ACCESS_FINELOCATION)
             return
         }
+
     }
+
 
     fun onlineButtonClick(view: View) {
         if (ActivityCompat.checkSelfPermission(
