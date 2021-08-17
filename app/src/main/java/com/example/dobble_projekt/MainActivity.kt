@@ -58,6 +58,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun offlineButtonClick(view: View) {
+        findNavController(R.id.fragmentContainerView3).navigate(R.id.action_chooseGameFragment_to_offlineGameFragment)
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -73,4 +77,6 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
+
 }

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.dobble_projekt.databinding.FragmentDeviceListBinding
 import android.R
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -30,7 +31,7 @@ class DeviceListFragment : Fragment() {
         super.onCreate(savedInstanceState)
         // Register for broadcasts when a device is discovered.
         val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        LocalBroadcastManager.getInstance(requireActivity()).registerReceiver(receiver, filter)
+        this.requireActivity().registerReceiver(receiver, filter)
     }
 
     override fun onCreateView(
@@ -103,7 +104,7 @@ class DeviceListFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         // Don't forget to unregister the ACTION_FOUND receiver.
-        LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(receiver)
+        this.requireActivity().unregisterReceiver(receiver)
     }
 
 }
