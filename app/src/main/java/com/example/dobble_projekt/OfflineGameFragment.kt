@@ -1,5 +1,6 @@
 package com.example.dobble_projekt
 
+import android.graphics.Rect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,7 +9,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.example.dobble_projekt.databinding.FragmentOfflineGameBinding
-import java.lang.Math.abs
+import java.lang.Math.*
 import java.lang.reflect.Array
 import java.util.*
 import kotlin.collections.ArrayList
@@ -67,7 +68,7 @@ class OfflineGameFragment : Fragment() {
         }
 
         for (i in 1..numOfSymbols) {
-            scale.add(0.4F + i / 40F)
+            scale.add(0.85F + i / 30F)
         }
 
         topImages.add(binding.image1)
@@ -106,48 +107,105 @@ class OfflineGameFragment : Fragment() {
             screenWidth = binding.constraintLayout.width
             layoutReady = true
             showImages(top_card, true, false)
+            showImages(bottom_card, false, true)
             binding.constraintLayout.viewTreeObserver.removeOnGlobalLayoutListener { this }
         }
     }
 
     private fun rotateImg(): Float {
         return Random().nextFloat() * Int.MAX_VALUE % 360
-        //binding.imageView3.rotation = toDegrees
     }
 
     private fun showImages(ind: Int, top: Boolean, bottom: Boolean){
         card = cards[ind]
-        for (i in 1 until 8){
+        for (i in 0 until 8){
             if (top){
-                val img:ImageView = topImages[i]
-                img.setImageResource(resolveDrawable(card[i]))
-                img.visibility = VISIBLE
-                img.rotation = rotateImg()
-                img.scaleX = scale[(1 + rotateImg()%8).toInt()]
-                img.scaleY = topImages[i].scaleX
-                topImages[i].x = setPosition(i, true)
-                topImages[i].y = setPosition(i, false)
+                topImages[i].setImageResource(resolveDrawable(card[i]))
+                topImages[i].visibility = VISIBLE
+                topImages[i].rotation = rotateImg()
+                topImages[i].scaleX = scale[(1 + rotateImg()%8).toInt()]
+                topImages[i].scaleY = topImages[i].scaleX
+
+                if (i == 0){
+                    topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat()
+                    topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat())
+                }
+                else {
+                    topImages[i].y = setPosition(i, true).toFloat() - topImages[i].height/2
+                    topImages[i].x = setPosition(i, false).toFloat() - topImages[i].width/2
+                    var rc1: Rect = Rect()
+                    var rc2: Rect = Rect()
+                    var j: Int = 0
+                    while (j < i) {
+                        rc1.bottom = (topImages[i].y + topImages[i].height).toInt()
+                        rc1.top = topImages[i].y.toInt()
+                        rc1.left = topImages[i].x.toInt()
+                        rc1.right = (topImages[i].x + topImages[i].width).toInt()
+                        rc2.bottom = (topImages[j].y + topImages[j].height).toInt()
+                        rc2.top = topImages[j].y.toInt()
+                        rc2.left = topImages[j].x.toInt()
+                        rc2.right = (topImages[j].x + topImages[j].width).toInt()
+                        if (Rect.intersects(rc1, rc2)) {
+                            j = 0
+                            topImages[i].y = setPosition(i, true).toFloat() - topImages[i].height/2
+                            topImages[i].x = setPosition(i, false).toFloat() - topImages[i].width/2
+                        }
+                        else
+                            j++
+                    }
+                }
             }
             if (bottom){
-                val img: ImageView = bottomImages[i]
-                img.setImageResource(resolveDrawable(card[i]))
+                bottomImages[i].setImageResource(resolveDrawable(card[i]))
                 bottomImages[i].visibility = VISIBLE
                 bottomImages[i].rotation = rotateImg()
                 bottomImages[i].scaleX = scale[(1 + rotateImg()%8).toInt()]
                 bottomImages[i].scaleY = bottomImages[i].scaleX
-                topImages[i].x = setPosition(i, true) * 3
-                topImages[i].y = setPosition(i, false)
+                if (i == 0){
+                    bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat()
+                    bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat())
+                }
+                else {
+                    bottomImages[i].y = setPosition(i, true).toFloat() - bottomImages[i].height/2 + screenHeight/2
+                    bottomImages[i].x = setPosition(i, false).toFloat() - bottomImages[i].width/2
+                    var rc1: Rect = Rect()
+                    var rc2: Rect = Rect()
+                    var j: Int = 0
+                    while (j < i) {
+                        rc1.bottom = (bottomImages[i].y + bottomImages[i].height).toInt()
+                        rc1.top = bottomImages[i].y.toInt()
+                        rc1.left = bottomImages[i].x.toInt()
+                        rc1.right = (bottomImages[i].x + bottomImages[i].width).toInt()
+                        rc2.bottom = (bottomImages[j].y + bottomImages[j].height).toInt()
+                        rc2.top = bottomImages[j].y.toInt()
+                        rc2.left = bottomImages[j].x.toInt()
+                        rc2.right = (bottomImages[j].x + bottomImages[j].width).toInt()
+                        if (Rect.intersects(rc1, rc2)) {
+                            j = 0
+                            bottomImages[i].y = setPosition(i, true).toFloat() - bottomImages[i].height/2 + screenHeight/2
+                            bottomImages[i].x = setPosition(i, false).toFloat() - bottomImages[i].width/2
+                        }
+                        else
+                            j++
+                    }
+                }
             }
         }
         flags[top_card] = true
         flags[bottom_card] = true
     }
 
-    private fun setPosition(i: Int, xy: Boolean): Float {
-        if(xy)
-            return (screenHeight/4).toFloat()
-        else
-            return (screenWidth/2).toFloat()
+    private fun setPosition(i: Int, xy: Boolean): Double {
+        var R: Float = abs(Random().nextFloat() * Float.MAX_VALUE % (0.25F * screenWidth)) + 0.05F * screenWidth
+        var alfa: Double = i + abs(Random().nextFloat() * Double.MAX_VALUE % (PI * i * 0.75))
+        if(xy) {
+            var y: Double = screenHeight * 0.25 + R * sin(alfa)
+            return y
+        }
+        else {
+            var x: Double = screenWidth * 0.5 + R * kotlin.math.cos(alfa)
+            return x
+        }
     }
 
     private fun imgPositionTop(){
