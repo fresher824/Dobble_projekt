@@ -35,5 +35,9 @@
         android:id="@+id/offlineGameFragment"
         android:name="com.example.dobble_projekt.OfflineGameFragment"
         android:label="fragment_offline_game"
-        tools:layout="@layout/fragment_offline_game" />
+        tools:layout="@layout/fragment_offline_game" >
+        <action
+            android:id="@+id/action_offlineGameFragment_to_chooseGameFragment"
+            app:destination="@id/chooseGameFragment" />
+    </fragment>
 </navigation>
