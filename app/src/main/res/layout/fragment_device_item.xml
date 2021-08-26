@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:screenOrientation="portrait"
     android:layout_margin="4dp"
     app:cardBackgroundColor="@color/material_on_surface_stroke"
     app:cardCornerRadius="5dp"

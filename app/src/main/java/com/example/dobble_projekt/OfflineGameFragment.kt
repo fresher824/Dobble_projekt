@@ -1,6 +1,7 @@
 package com.example.dobble_projekt
 
-import android.graphics.Rect
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -91,8 +92,8 @@ class OfflineGameFragment : Fragment() {
         bottomImages.add(binding.image16)
 
 
-        top_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size) //index duzej tablicy
-        bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size)
+        top_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1)) //index duzej tablicy
+        bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1))
 
         correctIndex = getIndex(top_card, bottom_card)
 
@@ -121,121 +122,116 @@ class OfflineGameFragment : Fragment() {
         }
 
         binding.image1.setOnClickListener {
-            if (correctIndex == cards[top_card][0])
-            {
-                resultTop++
-                binding.resultTop.text = resultTop.toString()
-                top_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size)
-                correctIndex = getIndex(top_card, bottom_card)
-                showImages(top_card, true, false)
-            }
+            correctChoiceTop(0)
         }
         binding.image2.setOnClickListener {
-            if (correctIndex == cards[top_card][1])
-            {
-                resultTop++
-                binding.resultTop.text = resultTop.toString()
-                top_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size)
-                correctIndex = getIndex(top_card, bottom_card)
-                showImages(top_card, true, false)
-            }
+            correctChoiceTop(1)
         }
         binding.image3.setOnClickListener {
-            if (correctIndex == cards[top_card][2])
-            {
-                resultTop++
-                binding.resultTop.text = resultTop.toString()
-                top_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size)
-                correctIndex = getIndex(top_card, bottom_card)
-                showImages(top_card, true, false)
-            }
+            correctChoiceTop(2)
         }
         binding.image4.setOnClickListener {
-            if (correctIndex == cards[top_card][3])
-            {
-                resultTop++
-                binding.resultTop.text = resultTop.toString()
-                top_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size)
-                correctIndex = getIndex(top_card, bottom_card)
-                showImages(top_card, true, false)
-            }
+            correctChoiceTop(3)
         }
         binding.image5.setOnClickListener {
-            if (correctIndex == cards[top_card][4])
-            {
-                resultTop++
-                binding.resultTop.text = resultTop.toString()
-                top_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size)
-                correctIndex = getIndex(top_card, bottom_card)
-                showImages(top_card, true, false)
-            }
+            correctChoiceTop(4)
         }
         binding.image6.setOnClickListener {
-            if (correctIndex == cards[top_card][5])
-            {
-                resultTop++
-                binding.resultTop.text = resultTop.toString()
-                top_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size)
-                correctIndex = getIndex(top_card, bottom_card)
-                showImages(top_card, true, false)
-            }
+            correctChoiceTop(5)
         }
         binding.image7.setOnClickListener {
-            if (correctIndex == cards[top_card][6])
-            {
-                resultTop++
-                binding.resultTop.text = resultTop.toString()
-                top_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size)
-                correctIndex = getIndex(top_card, bottom_card)
-                showImages(top_card, true, false)
-            }
+            correctChoiceTop(6)
         }
         binding.image8.setOnClickListener {
-            if (correctIndex == cards[top_card][7])
-            {
-                resultTop++
-                binding.resultTop.text = resultTop.toString()
-                top_card = abs(Random().nextInt() * Int.MAX_VALUE % cards.size)
-                correctIndex = getIndex(top_card, bottom_card)
-                showImages(top_card, true, false)
-            }
+            correctChoiceTop(7)
         }
-
 
 
         binding.image9.setOnClickListener {
-
+            correctChoiceBottom(0)
         }
         binding.image10.setOnClickListener {
-
+            correctChoiceBottom(1)
         }
         binding.image11.setOnClickListener {
-
+            correctChoiceBottom(2)
         }
         binding.image12.setOnClickListener {
-
+            correctChoiceBottom(3)
         }
         binding.image13.setOnClickListener {
-
+            correctChoiceBottom(4)
         }
         binding.image14.setOnClickListener {
-
+            correctChoiceBottom(5)
         }
         binding.image15.setOnClickListener {
-
+            correctChoiceBottom(6)
         }
         binding.image16.setOnClickListener {
-
+            correctChoiceBottom(7)
         }
 
 
+    }
+
+    private fun correctChoiceBottom(i: Int)
+    {
+        if (correctIndex == cards[bottom_card][i])
+        {
+            resultBottom++
+            binding.resultBottom.text = resultBottom.toString()
+            if (resultBottom % 5 == 0)
+                wonFun(true)
+            else {
+                bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+                correctIndex = getIndex(top_card, bottom_card)
+                showImages(bottom_card, false, true)
+            }
+        }
+    }
+
+    private fun wonFun(flag: Boolean) {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        if (flag){
+            builder.setMessage("You have won the game! :) ")
+        }
+        else {
+            builder.setMessage("You have not won the game! :( ")
+        }
+        builder.setPositiveButton("Continue playing", DialogInterface.OnClickListener{
+            dialog: DialogInterface?, which: Int ->  
+        })
+        builder.setNegativeButton("Menu", DialogInterface.OnClickListener {
+                dialog: DialogInterface?, which: Int -> goToMenu()  })
+        builder.show()
+    }
+
+    private fun goToMenu() {
+        findNavController().navigate(R.id.action_offlineGameFragment_to_chooseGameFragment)
+    }
+
+    private fun correctChoiceTop(i: Int)
+    {
+        if (correctIndex == cards[top_card][i])
+        {
+            resultTop++
+            binding.resultTop.text = resultTop.toString()
+            if (resultTop % 5 == 0)
+                wonFun(false)
+            else {
+                top_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+                correctIndex = getIndex(top_card, bottom_card)
+                showImages(top_card, true, false)
+            }
+        }
     }
 
     private fun getIndex(top: Int, bottom: Int): Int {
         cardT = cards[top]
         cardB = cards[bottom]
 
-        var help = cardT.filter(cardB::contains).toList()
+        val help = cardT.filter(cardB::contains).toList()
         return help[0]
     }
 
@@ -249,43 +245,43 @@ class OfflineGameFragment : Fragment() {
             if (top){
                 topImages[i].setImageResource(resolveDrawable(card[i]))
                 topImages[i].visibility = VISIBLE
-                //topImages[i].rotation = rotateImg()
-                //topImages[i].scaleX = scale[(1 + rotateImg()%8).toInt()]
-                //topImages[i].scaleY = topImages[i].scaleX
+                topImages[i].rotation = rotateImg()
+                topImages[i].scaleX = scale[(1 + rotateImg()%8).toInt()]
+                topImages[i].scaleY = topImages[i].scaleX
 
                 when (i)
                 {
-                    0 -> {
+                    0 -> {  //środek
                         topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat()
-                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat())
-                    }
-                    1 -> {
-                        topImages[i].y =(screenHeight / 4 - topImages[i].height/2).toFloat() - 0.15F * screenHeight
-                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat())
-                    }
-                    2 -> {
-                        topImages[i].y =(screenHeight / 4 - topImages[i].height/2).toFloat() + 0.15F * screenHeight
-                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat())
-                    }
-                    3 -> {
-                        topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat() - 0.1F * screenHeight
-                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) - 0.1F * screenWidth
-                    }
-                    4 -> {
-                        topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat() - 0.1F * screenHeight
                         topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) + 0.1F * screenWidth
+                    }
+                    1 -> { //gora lewo
+                        topImages[i].y =(screenHeight / 4 - topImages[i].height/2).toFloat() - 0.15F * screenHeight
+                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) - 0.05F * screenWidth
+                    }
+                    2 -> { //dol prawo
+                        topImages[i].y =(screenHeight / 4 - topImages[i].height/2).toFloat() + 0.15F * screenHeight
+                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) + 0.05F * screenWidth
+                    }
+                    3 -> {//? lewo gora
+                        topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat() - 0.09F * screenHeight
+                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) - 0.26F * screenWidth
+                    }
+                    4 -> {//? prawo gora
+                        topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat() - 0.09F * screenHeight
+                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) + 0.26F * screenWidth
                     }
                     5 -> {
                         topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat() + 0.1F * screenHeight
-                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) + 0.1F * screenWidth
+                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) + 0.25F * screenWidth
                     }
                     6 -> {
                         topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat() + 0.1F * screenHeight
-                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) - 0.1F * screenWidth
+                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) - 0.25F * screenWidth
                     }
                     7 -> {
                         topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat()
-                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) - 0.1F * screenWidth
+                        topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) - 0.13F * screenWidth
                     }
                     else -> {
                         topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat()
@@ -329,7 +325,47 @@ class OfflineGameFragment : Fragment() {
                 bottomImages[i].rotation = rotateImg()
                 bottomImages[i].scaleX = scale[(1 + rotateImg()%8).toInt()]
                 bottomImages[i].scaleY = bottomImages[i].scaleX
-                if (i == 0){
+
+                when (i)
+                {
+                    0 -> {  //środek
+                        bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat()
+                        bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat()) + 0.1F * screenWidth
+                    }
+                    1 -> { //gora lewo
+                        bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat()- 0.15F * screenHeight
+                        bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat())  - 0.05F * screenWidth
+                    }
+                    2 -> { //dol prawo
+                        bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat()+ 0.15F * screenHeight
+                        bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat())  + 0.05F * screenWidth
+                    }
+                    3 -> {
+                        bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat() - 0.09F * screenHeight
+                        bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat())  - 0.26F * screenWidth
+                    }
+                    4 -> {
+                        bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat() - 0.09F * screenHeight
+                        bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat()) + 0.26F * screenWidth
+                    }
+                    5 -> {
+                        bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat() + 0.1F * screenHeight
+                        bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat()) + 0.25F * screenWidth
+                    }
+                    6 -> {
+                        bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat() + 0.1F * screenHeight
+                        bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat()) - 0.25F * screenWidth
+                    }
+                    7 -> {
+                        bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat()
+                        bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat()) - 0.13F * screenWidth
+                    }
+                    else -> {
+                        bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat()
+                        bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat())
+                    }
+                }
+                /*if (i == 0){
                     bottomImages[i].y = ((screenHeight / 4 - bottomImages[i].height/2) + screenHeight/2).toFloat()
                     bottomImages[i].x = ((screenWidth / 2 - bottomImages[i].width/2).toFloat())
                 }
@@ -356,7 +392,7 @@ class OfflineGameFragment : Fragment() {
                         else
                             j++
                     }
-                }
+                }*/
             }
         }
     }
