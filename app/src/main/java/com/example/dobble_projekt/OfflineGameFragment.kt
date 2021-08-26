@@ -249,11 +249,12 @@ class OfflineGameFragment : Fragment() {
             if (top){
                 topImages[i].setImageResource(resolveDrawable(card[i]))
                 topImages[i].visibility = VISIBLE
-                topImages[i].rotation = rotateImg()
-                topImages[i].scaleX = scale[(1 + rotateImg()%8).toInt()]
-                topImages[i].scaleY = topImages[i].scaleX
+                //topImages[i].rotation = rotateImg()
+                //topImages[i].scaleX = scale[(1 + rotateImg()%8).toInt()]
+                //topImages[i].scaleY = topImages[i].scaleX
 
-                when (i){
+                when (i)
+                {
                     0 -> {
                         topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat()
                         topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat())

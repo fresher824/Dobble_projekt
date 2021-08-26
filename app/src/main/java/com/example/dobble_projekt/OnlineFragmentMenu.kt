@@ -1,6 +1,7 @@
 package com.example.dobble_projekt
 
 import android.bluetooth.BluetoothAdapter
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -39,8 +40,11 @@ class OnlineFragmentMenu : Fragment() {
             updateBTImage()
         }
         binding.createButton.setOnClickListener {
-            if (bluetoothAdapter.isEnabled)
-                findNavController().navigate(R.id.action_onlineFragmentMenu_to_deviceListFragment)
+            if (bluetoothAdapter.isEnabled) {
+                val intent: Intent = Intent(activity, chooseDevice::class.java)
+                startActivity(intent)
+                //findNavController().navigate(R.id.action_onlineFragmentMenu_to_deviceListFragment)
+            }
             else
                 Snackbar.make(binding.root, "Turn on bluetooth!", Snackbar.LENGTH_LONG).show()
         }
