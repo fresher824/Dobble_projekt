@@ -94,6 +94,13 @@ class OfflineGameFragment : Fragment() {
 
         top_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1)) //index duzej tablicy
         bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1))
+        if (bottom_card == top_card)
+        {
+            while (bottom_card == top_card)
+            {
+                bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1))
+            }
+        }
 
         correctIndex = getIndex(top_card, bottom_card)
 
@@ -181,10 +188,26 @@ class OfflineGameFragment : Fragment() {
         {
             resultBottom++
             binding.resultBottom.text = resultBottom.toString()
-            if (resultBottom % 5 == 0)
+            if (resultBottom % 5 == 0) {
                 wonFun(true)
+                bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+                if (bottom_card == top_card) {
+                    while (bottom_card == top_card) {
+                        bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+                    }
+                }
+                correctIndex = getIndex(top_card, bottom_card)
+                showImages(bottom_card, false, true)
+            }
             else {
                 bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+                if (bottom_card == top_card)
+                {
+                    while (bottom_card == top_card)
+                    {
+                        bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1))
+                    }
+                }
                 correctIndex = getIndex(top_card, bottom_card)
                 showImages(bottom_card, false, true)
             }
@@ -217,10 +240,28 @@ class OfflineGameFragment : Fragment() {
         {
             resultTop++
             binding.resultTop.text = resultTop.toString()
-            if (resultTop % 5 == 0)
+            if (resultTop % 5 == 0) {
                 wonFun(false)
+                top_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+                if (bottom_card == top_card)
+                {
+                    while (bottom_card == top_card)
+                    {
+                        top_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1))
+                    }
+                }
+                correctIndex = getIndex(top_card, bottom_card)
+                showImages(top_card, true, false)
+            }
             else {
                 top_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+                if (bottom_card == top_card)
+                {
+                    while (bottom_card == top_card)
+                    {
+                        top_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1))
+                    }
+                }
                 correctIndex = getIndex(top_card, bottom_card)
                 showImages(top_card, true, false)
             }
@@ -241,6 +282,7 @@ class OfflineGameFragment : Fragment() {
 
     private fun showImages(ind: Int, top: Boolean, bottom: Boolean){
         card = cards[ind]
+        card.shuffle()
         for (i in 0 until 8){
             if (top){
                 topImages[i].setImageResource(resolveDrawable(card[i]))
@@ -420,54 +462,55 @@ class OfflineGameFragment : Fragment() {
             5 -> R.drawable.brokul
             6 -> R.drawable.brzoskwinia
             7 -> R.drawable.burak
-            9 -> R.drawable.byk
-            10 -> R.drawable.cebula
-            11 -> R.drawable.cytryna
-            12 -> R.drawable.czosnek
-            13 -> R.drawable.golab
-            14 -> R.drawable.groszek
-            15 -> R.drawable.jablkoczerwone
-            16 -> R.drawable.jablkolisc
-            17 -> R.drawable.jablkomalinowka
-            18 -> R.drawable.jablkopapierowka
-            19 -> R.drawable.jezyny
-            20 -> R.drawable.kaczka
-            21 -> R.drawable.kapusta
-            22 -> R.drawable.kiwi
-            23 -> R.drawable.kogut
-            24 -> R.drawable.kokos
-            25 -> R.drawable.kokoszamkniety
-            26 -> R.drawable.kon
-            27 -> R.drawable.kot
-            28 -> R.drawable.krolik
-            29 -> R.drawable.krowa
-            30 -> R.drawable.kurka
-            31 -> R.drawable.limonka
-            32 -> R.drawable.limonkazamknieta
-            33 -> R.drawable.maliny
-            34 -> R.drawable.motyl
-            35 -> R.drawable.ogorek
-            36 -> R.drawable.ogorekrzeczywisty
-            37 -> R.drawable.osa
-            38 -> R.drawable.zielonecos
-            39 -> R.drawable.paprykachili
-            40 -> R.drawable.paprykaczerwona
-            41 -> R.drawable.paprykapomaranczowa
-            42 -> R.drawable.paprykazolta
-            43 -> R.drawable.paw
-            44 -> R.drawable.pies
-            45 -> R.drawable.pomarancza
-            46 -> R.drawable.pomidor
-            47 -> R.drawable.pomidorrzeczywisty
-            48 -> R.drawable.por
-            49 -> R.drawable.prosiak
-            50 -> R.drawable.przekrojonejablko
-            51 -> R.drawable.salata
-            52 -> R.drawable.sliwka
-            53 -> R.drawable.szparagi
-            54 -> R.drawable.truskawki
-            55 -> R.drawable.winogoronoczerwone
-            56 -> R.drawable.winogoronozielone
+            8 -> R.drawable.byk
+            9  -> R.drawable.cebula
+            10 -> R.drawable.cytryna
+            11 -> R.drawable.czosnek
+            12 -> R.drawable.golab
+            13 -> R.drawable.groszek
+            14 -> R.drawable.jablkoczerwone
+            15 -> R.drawable.jablkolisc
+            16 -> R.drawable.jablkomalinowka
+            17 -> R.drawable.jablkopapierowka
+            18 -> R.drawable.jezyny
+            19 -> R.drawable.kaczka
+            20 -> R.drawable.kapusta
+            21 -> R.drawable.kiwi
+            22 -> R.drawable.kogut
+            23 -> R.drawable.kokos
+            24 -> R.drawable.kokoszamkniety
+            25 -> R.drawable.kon
+            26 -> R.drawable.kot
+            27 -> R.drawable.krolik
+            28 -> R.drawable.krowa
+            29 -> R.drawable.kurka
+            30 -> R.drawable.limonka
+            31 -> R.drawable.limonkazamknieta
+            32 -> R.drawable.maliny
+            33 -> R.drawable.motyl
+            34 -> R.drawable.ogorek
+            35 -> R.drawable.ogorekrzeczywisty
+            36 -> R.drawable.osa
+            37 -> R.drawable.zielonecos
+            38 -> R.drawable.paprykachili
+            39 -> R.drawable.paprykaczerwona
+            40 -> R.drawable.paprykapomaranczowa
+            41 -> R.drawable.paprykazolta
+            42 -> R.drawable.paw
+            43 -> R.drawable.pies
+            44 -> R.drawable.pomarancza
+            45 -> R.drawable.pomidor
+            46 -> R.drawable.pomidorrzeczywisty
+            47 -> R.drawable.por
+            48 -> R.drawable.prosiak
+            49 -> R.drawable.przekrojonejablko
+            50 -> R.drawable.salata
+            51 -> R.drawable.sliwka
+            52 -> R.drawable.szparagi
+            53 -> R.drawable.truskawki
+            54 -> R.drawable.winogoronoczerwone
+            55 -> R.drawable.winogoronozielone
+            56 -> R.drawable.owca
             else -> R.drawable.ziemniaki
         }
     }
