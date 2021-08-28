@@ -1,5 +1,6 @@
 package com.example.dobble_projekt
 
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -12,12 +13,14 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.*
 import com.example.dobble_projekt.databinding.ActivityChooseDeviceBinding
 import com.example.dobble_projekt.databinding.ActivityMainBinding
+import android.widget.TextView
+
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+
 
 class chooseDevice : AppCompatActivity() {
 
@@ -28,6 +31,10 @@ class chooseDevice : AppCompatActivity() {
     lateinit var adapterAvailableDevices: ArrayAdapter<String>
     lateinit var bluetoothAdapter: BluetoothAdapter
     lateinit var progressScanDevices: ProgressBar
+    companion object {
+        // Return Intent extra
+        var EXTRA_DEVICE_ADDRESS = "device_address"
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +73,17 @@ class chooseDevice : AppCompatActivity() {
                 adapterPairedDevices.add(device.name + "\n" + device.address)
             }
         }
+
+        listAvailableDevices.onItemClickListener =
+            OnItemClickListener { adapterView, view, i, l ->
+                val info = (view as TextView).text.toString()
+                val address = info.substring(info.length - 17)
+                val intent = Intent()
+                intent.putExtra("deviceAddress", address)
+                setResult(RESULT_OK, intent)
+                finish()
+            }
+
     }
 
     private val receiver = object : BroadcastReceiver() {

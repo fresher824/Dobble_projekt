@@ -188,7 +188,7 @@ class OfflineGameFragment : Fragment() {
         {
             resultBottom++
             binding.resultBottom.text = resultBottom.toString()
-            if (resultBottom % 5 == 0) {
+            if (resultBottom % 29 == 0) {
                 wonFun(true)
                 bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
                 if (bottom_card == top_card) {
@@ -240,7 +240,7 @@ class OfflineGameFragment : Fragment() {
         {
             resultTop++
             binding.resultTop.text = resultTop.toString()
-            if (resultTop % 5 == 0) {
+            if (resultTop % 29 == 0) {
                 wonFun(false)
                 top_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
                 if (bottom_card == top_card)
