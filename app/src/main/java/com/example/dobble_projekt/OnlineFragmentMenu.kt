@@ -5,13 +5,9 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
-import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
-import android.os.Message
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -19,14 +15,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.dobble_projekt.databinding.FragmentOnlineMenuBinding
 import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
+
 
 class OnlineFragmentMenu : Fragment() {
 
@@ -36,6 +31,7 @@ class OnlineFragmentMenu : Fragment() {
     val requestCode = 1;
     val MY_UUID: UUID = UUID.randomUUID()
     val NAME: String = "Dobble projekt"
+    private var gameUtils: GameUtils? = null
 
     companion object {
         const val MESSAGE_CONNECTED: Int = 3
@@ -44,9 +40,13 @@ class OnlineFragmentMenu : Fragment() {
 
         // Defines several constants used when transmitting messages between the
         // service and the UI.
-        const val MESSAGE_READ: Int = 0
-        const val MESSAGE_WRITE: Int = 1
-        const val MESSAGE_TOAST: Int = 2
+        const val MESSAGE_STATE_CHANGED: Int = 0
+        const val MESSAGE_READ = 1
+        const val MESSAGE_WRITE = 2
+        const val MESSAGE_DEVICE_NAME = 3
+        const val MESSAGE_TOAST = 4
+        const val DEVICE_NAME = "deviceName"
+        const val TOAST = "toast"
         // ... (Add other message types here as needed.)
     }
 
@@ -57,6 +57,7 @@ class OnlineFragmentMenu : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentOnlineMenuBinding.inflate(inflater, container, false)
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        gameUtils = GameUtils(context, handler)
         if (bluetoothAdapter.isEnabled)
         {
             val img: ImageView = binding.bluetoothView
@@ -102,6 +103,7 @@ class OnlineFragmentMenu : Fragment() {
             }
             startActivityForResult(discoverableIntent, requestCode)
             Toast.makeText(context, "Your device is now discoverable for 300 seconds", Toast.LENGTH_SHORT).show()
+            AcceptThread()
             AcceptThread().run()
         }
     }
@@ -120,6 +122,38 @@ class OnlineFragmentMenu : Fragment() {
             img.setImageResource(R.drawable.bluetooth_on)
             bluetoothAdapter.enable()
         }
+    }
+
+    private val handler = Handler { message ->
+        when (message.what) {
+            MESSAGE_STATE_CHANGED -> when (message.arg1) {
+                /*ChatUtils.STATE_NONE -> setState("Not Connected")
+                ChatUtils.STATE_LISTEN -> setState("Not Connected")
+                ChatUtils.STATE_CONNECTING -> setState("Connecting...")
+                ChatUtils.STATE_CONNECTED -> setState("Connected: $connectedDevice")*/
+            }
+            MESSAGE_WRITE -> {
+                /*val buffer1 = message.obj as ByteArray
+                val outputBuffer = String(buffer1)
+                adapterMainChat.add("Me: $outputBuffer")*/
+            }
+            MESSAGE_READ -> {
+                /*val buffer = message.obj as ByteArray
+                val inputBuffer = String(buffer, 0, message.arg1)
+                adapterMainChat.add(connectedDevice.toString() + ": " + inputBuffer)*/
+            }
+            MESSAGE_DEVICE_NAME -> {
+               /* connectedDevice =
+                    message.data.getString(DEVICE_NAME)
+                Toast.makeText(context, connectedDevice, Toast.LENGTH_SHORT).show()*/
+            }
+            MESSAGE_TOAST -> Toast.makeText(
+                context,
+                message.data.getString(TOAST),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        false
     }
 
     private inner class AcceptThread : Thread() {
