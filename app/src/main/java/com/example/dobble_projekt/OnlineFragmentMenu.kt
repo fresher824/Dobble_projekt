@@ -69,8 +69,9 @@ class OnlineFragmentMenu : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == SELECT_DEVICE && resultCode == RESULT_OK) {
             val address = data?.getStringExtra("deviceAddress")
-            Toast.makeText(context, "Address: " + address, Toast.LENGTH_SHORT).show()
-            ConnectThread(bluetoothAdapter.getRemoteDevice(address)).run()
+            //Toast.makeText(context, "Address: " + address, Toast.LENGTH_SHORT).show()
+            //ConnectThread(bluetoothAdapter.getRemoteDevice(address)).run()
+            gameUtils?.connect(bluetoothAdapter.getRemoteDevice(address))
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -103,8 +104,8 @@ class OnlineFragmentMenu : Fragment() {
             }
             startActivityForResult(discoverableIntent, requestCode)
             Toast.makeText(context, "Your device is now discoverable for 300 seconds", Toast.LENGTH_SHORT).show()
-            AcceptThread()
-            AcceptThread().run()
+            //AcceptThread()
+            //AcceptThread().run()
         }
     }
 
@@ -292,6 +293,12 @@ class OnlineFragmentMenu : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (gameUtils != null)
+            gameUtils?.stop()
     }
 
 
