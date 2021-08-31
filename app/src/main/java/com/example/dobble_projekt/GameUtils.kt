@@ -12,17 +12,26 @@ import android.os.Bundle
 import android.os.Message
 import android.util.Log
 import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.*
+
+
+
 
 
 
 class GameUtils(c: Context?, h: Handler) {
     private var context: Context? = c
     private var handler: Handler? = h
+
     val MY_UUID: UUID = UUID.randomUUID()
     val NAME: String = "Dobble projekt"
+
     private var connectThread: ConnectThread? = null
     private var acceptThread: AcceptThread? = null
+    private var connectedThread: ConnectedThread? = null
+
     private var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
     val STATE_NONE = 0
@@ -52,6 +61,12 @@ class GameUtils(c: Context?, h: Handler) {
             acceptThread!!.start()
         }
 
+        if (connectedThread != null)
+        {
+            connectedThread!!.cancel()
+            connectedThread = null
+        }
+
         setState(STATE_LISTEN)
     }
 
@@ -63,6 +78,12 @@ class GameUtils(c: Context?, h: Handler) {
         if (acceptThread != null) {
             acceptThread!!.cancel();
             acceptThread = null;
+        }
+
+        if (connectedThread != null)
+        {
+            connectedThread!!.cancel()
+            connectedThread = null
         }
 
         setState(STATE_NONE)
@@ -81,9 +102,21 @@ class GameUtils(c: Context?, h: Handler) {
         setState(STATE_CONNECTING)
     }
 
+
+    fun write(buffer: ByteArray?) {
+        var connThread: ConnectedThread
+        synchronized(this) {
+            if (state != STATE_CONNECTED) {
+                return
+            }
+            connThread = connectedThread!!
+        }
+        connThread.write(buffer!!)
+    }
+
     private inner class AcceptThread : Thread(){
         private var serverSocket: BluetoothServerSocket? = try{
-            bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(NAME, MY_UUID)
+            bluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID)
         } catch (e: IOException){
             Log.e(TAG,"Accept->Constructor", e)
             null
@@ -91,25 +124,27 @@ class GameUtils(c: Context?, h: Handler) {
 
         override fun run(){
             var socket: BluetoothSocket? = null
-            try {
-                socket = serverSocket?.accept()
-            } catch (e: IOException){
-                Log.e(TAG,"Accept->Run", e)
+            while (true) {
                 try {
-                    serverSocket?.close()
-                } catch (e1: IOException) {
-                    Log.e(TAG,"Accept->Close", e1)
+                    socket = serverSocket?.accept()
+                } catch (e: IOException) {
+                    Log.e(TAG, "Accept->Run", e)
+                    try {
+                        serverSocket?.close()
+                    } catch (e1: IOException) {
+                        Log.e(TAG, "Accept->Close", e1)
+                    }
                 }
-            }
 
-            if (socket != null){
-                when (gState()){
-                    STATE_LISTEN, STATE_CONNECTING -> connect(socket.remoteDevice)
-                    STATE_NONE, STATE_CONNECTED -> {
-                        try {
-                            socket.close()
-                        } catch (e: IOException){
-                            Log.e(TAG,"Accept->CloseSocket", e)
+                if (socket != null) {
+                    when (gState()) {
+                        STATE_LISTEN, STATE_CONNECTING -> connected(socket, socket.remoteDevice)
+                        STATE_NONE, STATE_CONNECTED -> {
+                            try {
+                                socket.close()
+                            } catch (e: IOException) {
+                                Log.e(TAG, "Accept->CloseSocket", e)
+                            }
                         }
                     }
                 }
@@ -142,8 +177,9 @@ class GameUtils(c: Context?, h: Handler) {
                 try {
                     socket?.close()
                 } catch (e1: IOException){
-                    Log.e(TAG,"Connect->CloseSocket", e)
+                    Log.e(TAG,"Connect->CloseSocket")
                 }
+                Log.e(TAG,"Connect->CloseSocket")
                 connectionFailed()
                 return
 
@@ -152,7 +188,7 @@ class GameUtils(c: Context?, h: Handler) {
         @Synchronized
         connectThread = null
 
-        connect(device)
+        connected(socket, device)
         }
 
         fun cancel(){
@@ -164,6 +200,61 @@ class GameUtils(c: Context?, h: Handler) {
         }
 
     }
+
+
+    private inner class ConnectedThread(soc: BluetoothSocket?) : Thread(){
+        private var socket: BluetoothSocket? = soc
+        private val inputStream: InputStream? = try {
+            socket!!.inputStream
+        } catch (e: IOException){
+            null
+        }
+        private val outputStream: OutputStream? = try {
+            socket!!.outputStream
+        } catch (e: IOException){
+            null
+        }
+
+        override fun run(){
+            val buffer = ByteArray(1024)
+            val bytes: Int
+
+            try {
+                bytes = inputStream!!.read(buffer)
+                handler!!.obtainMessage(OnlineFragmentMenu.MESSAGE_READ, bytes, -1, buffer).sendToTarget()
+            } catch (e: IOException) {
+                connectionLost()
+            }
+        }
+
+        private fun connectionLost() {
+            val message: Message = handler!!.obtainMessage(OnlineFragmentMenu.MESSAGE_TOAST)
+            val bundle: Bundle = Bundle()
+            bundle.putString(OnlineFragmentMenu.TOAST, "Connection lost")
+            message.data = bundle
+            handler?.sendMessage(message)
+
+            this@GameUtils.start()
+        }
+
+        fun write(buffer: ByteArray){
+            try {
+                outputStream?.write(buffer)
+                handler!!.obtainMessage(OnlineFragmentMenu.MESSAGE_WRITE, -1, -1, buffer).sendToTarget()
+            } catch (e: IOException) {
+            }
+        }
+
+        fun cancel() {
+            try {
+                socket!!.close()
+            } catch (e: IOException) {
+            }
+        }
+
+    }
+
+
     @Synchronized
     private fun connectionFailed() {
         val message: Message = handler!!.obtainMessage(OnlineFragmentMenu.MESSAGE_TOAST)
@@ -176,12 +267,21 @@ class GameUtils(c: Context?, h: Handler) {
     }
 
     @Synchronized
-    private fun connected(device: BluetoothDevice?) {
+    private fun connected(socket: BluetoothSocket?, device: BluetoothDevice?) {
         if (connectThread != null)
         {
             connectThread?.cancel()
             connectThread = null
         }
+
+        if (connectedThread != null)
+        {
+            connectedThread!!.cancel()
+            connectedThread = null
+        }
+
+        connectedThread = ConnectedThread(socket);
+        connectedThread!!.start();
 
         val message: Message = handler!!.obtainMessage(OnlineFragmentMenu.MESSAGE_DEVICE_NAME)
         val bundle: Bundle = Bundle()
