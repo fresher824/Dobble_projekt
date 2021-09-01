@@ -17,10 +17,6 @@ import java.io.OutputStream
 import java.util.*
 
 
-
-
-
-
 class GameUtils(c: Context?, h: Handler) {
     private var context: Context? = c
     private var handler: Handler? = h
@@ -72,12 +68,12 @@ class GameUtils(c: Context?, h: Handler) {
 
     @Synchronized fun stop(){
         if (connectThread != null) {
-            connectThread!!.cancel();
-            connectThread = null;
+            connectThread!!.cancel()
+            connectThread = null
         }
         if (acceptThread != null) {
-            acceptThread!!.cancel();
-            acceptThread = null;
+            acceptThread!!.cancel()
+            acceptThread = null
         }
 
         if (connectedThread != null)
@@ -164,7 +160,7 @@ class GameUtils(c: Context?, h: Handler) {
         private var device: BluetoothDevice? = d
 
         private var socket: BluetoothSocket? = try {
-            device?.createRfcommSocketToServiceRecord(MY_UUID);
+            device?.createRfcommSocketToServiceRecord(MY_UUID)
         } catch (e: IOException) {
             Log.e(TAG,"Connect->Constructor", e)
             null
@@ -229,7 +225,7 @@ class GameUtils(c: Context?, h: Handler) {
 
         private fun connectionLost() {
             val message: Message = handler!!.obtainMessage(OnlineFragmentMenu.MESSAGE_TOAST)
-            val bundle: Bundle = Bundle()
+            val bundle = Bundle()
             bundle.putString(OnlineFragmentMenu.TOAST, "Connection lost")
             message.data = bundle
             handler?.sendMessage(message)
@@ -258,7 +254,7 @@ class GameUtils(c: Context?, h: Handler) {
     @Synchronized
     private fun connectionFailed() {
         val message: Message = handler!!.obtainMessage(OnlineFragmentMenu.MESSAGE_TOAST)
-        val bundle: Bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString(OnlineFragmentMenu.TOAST, "Cannot connect to the device. ")
         message.data = bundle
         handler!!.sendMessage(message)
@@ -280,11 +276,11 @@ class GameUtils(c: Context?, h: Handler) {
             connectedThread = null
         }
 
-        connectedThread = ConnectedThread(socket);
-        connectedThread!!.start();
+        connectedThread = ConnectedThread(socket)
+        connectedThread!!.start()
 
         val message: Message = handler!!.obtainMessage(OnlineFragmentMenu.MESSAGE_DEVICE_NAME)
-        val bundle: Bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString(OnlineFragmentMenu.DEVICE_NAME, device?.name)
         message.data = bundle
         handler!!.sendMessage(message)

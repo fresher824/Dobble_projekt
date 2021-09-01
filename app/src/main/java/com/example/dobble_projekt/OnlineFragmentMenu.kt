@@ -193,30 +193,35 @@ class OnlineFragmentMenu : Fragment() {
                         }
                     }
                     correctIndex = getIndex(your_card, my_card)
-                    val array: ArrayList<Int> = ArrayList()
+                    val array: ArrayList<Byte> = ArrayList()
                     for (i in 0..1) {
                         if (i == 0)
                         {
                             for (j in 0..7) {
-                                array.add(cards[my_card][j])
+                                array.add(cards[my_card][j].toByte())
                             }
                         }
                         else {
                             for (j in 0..7) {
-                                array.add(cards[your_card][j])
+                                array.add(cards[your_card][j].toByte())
                             }
                         }
                     }
                     if (!array.isEmpty())
                     {
-                        //gameUtils?.write()
+                        gameUtils?.write(array.toByteArray())
                     }
                     //Pokaż obrazki
                 }
             }
             else
             {
-
+                val id: ArrayList<Byte> = ArrayList()
+                id.add(cards[my_card][1].toByte())
+                if (!id.isEmpty())
+                {
+                    gameUtils?.write(id.toByteArray())
+                }
             }
         }
         binding.imageOnline2.setOnClickListener {
@@ -272,7 +277,6 @@ class OnlineFragmentMenu : Fragment() {
             }
             MESSAGE_WRITE -> {
                 val buffer1 = message.obj as ByteArray
-                //val outputBuffer = String(buffer1)
             }
             MESSAGE_READ -> {
                 val buffer = message.obj as ByteArray
