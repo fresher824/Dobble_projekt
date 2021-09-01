@@ -2,13 +2,9 @@ package com.example.dobble_projekt
 
 import android.app.Activity.RESULT_OK
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothServerSocket
-import android.bluetooth.BluetoothSocket
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +13,9 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.example.dobble_projekt.databinding.FragmentOnlineMenuBinding
 import com.google.android.material.snackbar.Snackbar
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 
 class OnlineFragmentMenu : Fragment() {
@@ -29,6 +24,27 @@ class OnlineFragmentMenu : Fragment() {
     private lateinit var binding: FragmentOnlineMenuBinding
     private val SELECT_DEVICE = 102
     private var gameUtils: GameUtils? = null
+
+    //Game
+    private var layoutReady: Boolean = false
+    var numOfSymbols: Int = 8
+    var n = numOfSymbols - 1
+    var cards: ArrayList<ArrayList<Int>> = ArrayList()
+    var card: ArrayList<Int> = ArrayList()
+    var your_card: Int = 0
+    var my_card: Int = 0
+    var scale: ArrayList<Float> = ArrayList()
+    var yourImages: MutableList<ImageView> = ArrayList()
+    var myImages: MutableList<ImageView> = ArrayList()
+    var screenHeight: Int = -1
+    var screenWidth: Int = -1
+    var correctIndex: Int = 0
+    var cardY: ArrayList<Int> = ArrayList()
+    var cardM: ArrayList<Int> = ArrayList()
+    var resultYour: Int = 0
+    var resultMy: Int = 0
+    var flag: Boolean = true
+    var createrFlag: Boolean = false
 
     companion object {
         private const val TAG = "MY_APP_DEBUG_TAG"
@@ -57,6 +73,73 @@ class OnlineFragmentMenu : Fragment() {
             val img: ImageView = binding.bluetoothView
             img.setImageResource(R.drawable.bluetooth_on)
         }
+
+        //Game
+        for (i in 1..(n+1)){
+            card.add(i)
+        }
+        cards.add(card)
+
+        for (j in 1..n){
+            card = ArrayList()
+            card.add(1)
+            for (k in 1..n){
+                card.add((n + n * (j-1) + k+1))
+            }
+            cards.add(card)
+        }
+
+        for (i in 1..n){
+            for (j in 1..n){
+                card = ArrayList()
+                card.add(i+1)
+                for (k in 1..n){
+                    card.add(n + 2 + n * (k-1) + (((i-1) * (k-1) +j-1) % n))
+                }
+                cards.add(card)
+            }
+        }
+
+        for (i in 1..numOfSymbols) {
+            scale.add(0.65F + i / 30F)
+        }
+
+        yourImages.add(binding.imageOnline1)
+        yourImages.add(binding.imageOnline2)
+        yourImages.add(binding.imageOnline3)
+        yourImages.add(binding.imageOnline4)
+        yourImages.add(binding.imageOnline5)
+        yourImages.add(binding.imageOnline6)
+        yourImages.add(binding.imageOnline7)
+        yourImages.add(binding.imageOnline8)
+
+        myImages.add(binding.imageOnline9)
+        myImages.add(binding.imageOnline10)
+        myImages.add(binding.imageOnline11)
+        myImages.add(binding.imageOnline12)
+        myImages.add(binding.imageOnline13)
+        myImages.add(binding.imageOnline14)
+        myImages.add(binding.imageOnline15)
+        myImages.add(binding.imageOnline16)
+
+
+        your_card =
+            Math.abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1)) //index duzej tablicy
+        my_card = Math.abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+        if (my_card == your_card)
+        {
+            while (my_card == your_card)
+            {
+                my_card = Math.abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+            }
+        }
+
+        correctIndex = getIndex(your_card, my_card)
+
+        binding.resultOnlineBottom.text = resultMy.toString()
+        binding.resultOnlineTop.text = resultYour.toString()
+        //EndGame
+
         return binding.root
     }
 
@@ -64,6 +147,7 @@ class OnlineFragmentMenu : Fragment() {
         if (requestCode == SELECT_DEVICE && resultCode == RESULT_OK) {
             val address = data?.getStringExtra("deviceAddress")
             gameUtils?.connect(bluetoothAdapter.getRemoteDevice(address))
+            createrFlag = true
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -89,6 +173,77 @@ class OnlineFragmentMenu : Fragment() {
             startActivity(discoverableIntent)
             Toast.makeText(context, "Your device is now discoverable for 300 seconds", Toast.LENGTH_SHORT).show()
         }
+
+
+        //Game
+
+        binding.imageOnline1.setOnClickListener {
+            if (createrFlag)
+            {
+                if (correctIndex == cards[my_card][1])
+                {
+                    resultMy++
+                    binding.resultOnlineBottom.text = resultMy.toString()
+                    your_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+                    if (my_card == your_card)
+                    {
+                        while (my_card == your_card)
+                        {
+                            my_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
+                        }
+                    }
+                    correctIndex = getIndex(your_card, my_card)
+                    val array: ArrayList<Int> = ArrayList()
+                    for (i in 0..1) {
+                        if (i == 0)
+                        {
+                            for (j in 0..7) {
+                                array.add(cards[my_card][j])
+                            }
+                        }
+                        else {
+                            for (j in 0..7) {
+                                array.add(cards[your_card][j])
+                            }
+                        }
+                    }
+                    if (!array.isEmpty())
+                    {
+                        //gameUtils?.write()
+                    }
+                    //Pokaż obrazki
+                }
+            }
+            else
+            {
+
+            }
+        }
+        binding.imageOnline2.setOnClickListener {
+
+        }
+        binding.imageOnline3.setOnClickListener {
+
+        }
+        binding.imageOnline4.setOnClickListener {
+
+        }
+        binding.imageOnline5.setOnClickListener {
+
+        }
+        binding.imageOnline6.setOnClickListener {
+
+        }
+        binding.imageOnline7.setOnClickListener {
+
+        }
+        binding.imageOnline8.setOnClickListener {
+
+        }
+
+        //EndGame
+
+
     }
 
 
@@ -143,6 +298,88 @@ class OnlineFragmentMenu : Fragment() {
             gameUtils?.stop()
     }
 
+    //Game
+    private fun getIndex(top: Int, bottom: Int): Int {
+        cardY = cards[top]
+        cardM = cards[bottom]
 
+        val help = cardY.filter(cardM::contains).toList()
+        return help[0]
+    }
+
+
+
+    fun resolveDrawable(value: Int): Int {
+        return when(value) {
+            0 -> R.drawable.ziemniaki
+            1 -> R.drawable.arbuz
+            2 -> R.drawable.baklazan
+            3 -> R.drawable.baklazanzeczywisty
+            4 -> R.drawable.borowka
+            5 -> R.drawable.brokul
+            6 -> R.drawable.brzoskwinia
+            7 -> R.drawable.burak
+            8 -> R.drawable.byk
+            9  -> R.drawable.cebula
+            10 -> R.drawable.cytryna
+            11 -> R.drawable.czosnek
+            12 -> R.drawable.golab
+            13 -> R.drawable.groszek
+            14 -> R.drawable.jablkoczerwone
+            15 -> R.drawable.jablkolisc
+            16 -> R.drawable.jablkomalinowka
+            17 -> R.drawable.jablkopapierowka
+            18 -> R.drawable.jezyny
+            19 -> R.drawable.kaczka
+            20 -> R.drawable.kapusta
+            21 -> R.drawable.kiwi
+            22 -> R.drawable.kogut
+            23 -> R.drawable.kokos
+            24 -> R.drawable.kokoszamkniety
+            25 -> R.drawable.kon
+            26 -> R.drawable.kot
+            27 -> R.drawable.krolik
+            28 -> R.drawable.krowa
+            29 -> R.drawable.kurka
+            30 -> R.drawable.limonka
+            31 -> R.drawable.limonkazamknieta
+            32 -> R.drawable.maliny
+            33 -> R.drawable.motyl
+            34 -> R.drawable.ogorek
+            35 -> R.drawable.ogorekrzeczywisty
+            36 -> R.drawable.osa
+            37 -> R.drawable.zielonecos
+            38 -> R.drawable.paprykachili
+            39 -> R.drawable.paprykaczerwona
+            40 -> R.drawable.paprykapomaranczowa
+            41 -> R.drawable.paprykazolta
+            42 -> R.drawable.paw
+            43 -> R.drawable.pies
+            44 -> R.drawable.pomarancza
+            45 -> R.drawable.pomidor
+            46 -> R.drawable.pomidorrzeczywisty
+            47 -> R.drawable.por
+            48 -> R.drawable.prosiak
+            49 -> R.drawable.przekrojonejablko
+            50 -> R.drawable.salata
+            51 -> R.drawable.sliwka
+            52 -> R.drawable.szparagi
+            53 -> R.drawable.truskawki
+            54 -> R.drawable.winogoronoczerwone
+            55 -> R.drawable.winogoronozielone
+            56 -> R.drawable.owca
+            else -> R.drawable.ziemniaki
+        }
+    }
+    //EndGame
+
+    /* Informacje do przesłania:
+       a) Od kreującego grę do drugiego
+        - indeksy obrazków obu graczy
+        -
+       b) Od drugiego do kreującego
+        - indeks wybranego obrazka
+        -
+    */
 }
 

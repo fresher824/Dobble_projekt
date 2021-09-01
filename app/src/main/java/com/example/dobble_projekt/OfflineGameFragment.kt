@@ -107,9 +107,6 @@ class OfflineGameFragment : Fragment() {
         binding.resultBottom.text = resultBottom.toString()
         binding.resultTop.text = resultTop.toString()
 
-        //cardT.retainAll(cardB)
-        //correctIndex = cardT[0]
-
         // Inflate the layout for this fragment
         return binding.root
     }
