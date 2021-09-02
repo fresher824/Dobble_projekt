@@ -43,7 +43,7 @@ class OfflineGameFragment : Fragment() {
     ): View? {
         binding = FragmentOfflineGameBinding.inflate(inflater, container, false)
 
-
+        //Rozpoczęcie tworzenia tablicy o rozmiarze 57x8, w której każdy wiersz ma tylko jedną wspólną wartość z każdym pozostałym
         for (i in 1..(n+1)){
             card.add(i)
         }
@@ -68,11 +68,14 @@ class OfflineGameFragment : Fragment() {
                 cards.add(card)
             }
         }
+        //Koniec
 
+        //Tworzenie tablicy z różnymi wartościami skali obrazków
         for (i in 1..numOfSymbols) {
             scale.add(0.65F + i / 30F)
         }
 
+        //Przypisywanie ośmiu obiektów ImageView do listy
         topImages.add(binding.image1)
         topImages.add(binding.image2)
         topImages.add(binding.image3)
@@ -81,7 +84,7 @@ class OfflineGameFragment : Fragment() {
         topImages.add(binding.image6)
         topImages.add(binding.image7)
         topImages.add(binding.image8)
-
+        //Przypisywanie kolejnych ośmiu obiektów ImageView do listy
         bottomImages.add(binding.image9)
         bottomImages.add(binding.image10)
         bottomImages.add(binding.image11)
@@ -91,9 +94,10 @@ class OfflineGameFragment : Fragment() {
         bottomImages.add(binding.image15)
         bottomImages.add(binding.image16)
 
-
+        //Losowanie indeksu wiersza z tablicy 57x8 - losowanie karty
         top_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1)) //index duzej tablicy
         bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1))
+        //Sprawdzenie czy nie wylosowano dwóch takich samych kart
         if (bottom_card == top_card)
         {
             while (bottom_card == top_card)
@@ -102,8 +106,10 @@ class OfflineGameFragment : Fragment() {
             }
         }
 
+        //Sprawdzenie, jaki obrazek jest taki sam na obu kartach
         correctIndex = getIndex(top_card, bottom_card)
 
+        //Przypisanie 0 do wyniku każdego z graczy
         binding.resultBottom.text = resultBottom.toString()
         binding.resultTop.text = resultTop.toString()
 
@@ -113,10 +119,12 @@ class OfflineGameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //Przypisanie wartości wysokości i szerokości ekranu do zmiennych
         binding.constraintLayout.viewTreeObserver.addOnGlobalLayoutListener {
             screenHeight = binding.constraintLayout.height
             screenWidth = binding.constraintLayout.width
             layoutReady = true
+            //Wyświetlenie obrazków na ekranie przy pierwszy uruchomieniu
             if (flag) {
                 showImages(top_card, true, false)
                 showImages(bottom_card, false, true)
@@ -125,6 +133,7 @@ class OfflineGameFragment : Fragment() {
             binding.constraintLayout.viewTreeObserver.removeOnGlobalLayoutListener { this }
         }
 
+        //Nasłuchiwacze przypisane do każdego obrazka na ekranie
         binding.image1.setOnClickListener {
             correctChoiceTop(0)
         }
@@ -181,22 +190,31 @@ class OfflineGameFragment : Fragment() {
 
     private fun correctChoiceBottom(i: Int)
     {
+        //SPrawdzenie czy wybrano poprawny obrazek
         if (correctIndex == cards[bottom_card][i])
         {
+            //Zwiekszenie wyniku o 1
             resultBottom++
             binding.resultBottom.text = resultBottom.toString()
+            //Czy osiągnieto wynik 29
             if (resultBottom % 29 == 0) {
+                //Wywołanie funkcji odpowiedzialnej za wyświetlenie Alert Dialog
                 wonFun(true)
+                //Losowanie nowej karty
                 bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
                 if (bottom_card == top_card) {
                     while (bottom_card == top_card) {
                         bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
                     }
                 }
+                //Sprawdzanie poprawnego indeksu
                 correctIndex = getIndex(top_card, bottom_card)
+                //Wyswietlenie obrazków
                 showImages(bottom_card, false, true)
             }
+            //Nie osiągnięto wyniku 29
             else {
+                //Losowanie nowej karty
                 bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size - 1))
                 if (bottom_card == top_card)
                 {
@@ -205,7 +223,9 @@ class OfflineGameFragment : Fragment() {
                         bottom_card = abs(Random().nextInt() * Int.MAX_VALUE % (cards.size-1))
                     }
                 }
+                //Sprawdzanie poprawnego indeksu
                 correctIndex = getIndex(top_card, bottom_card)
+                //Wyswietlenie obrazków
                 showImages(bottom_card, false, true)
             }
         }
@@ -219,9 +239,11 @@ class OfflineGameFragment : Fragment() {
         else {
             builder.setMessage("You have not won the game! :( ")
         }
+        //Jesli wybrano ten przycisk, gra jest kontynuowana
         builder.setPositiveButton("Continue playing", DialogInterface.OnClickListener{
             dialog: DialogInterface?, which: Int ->  
         })
+        //Jesli ten, gra jest przerywana i gracz wraca do menu
         builder.setNegativeButton("Menu", DialogInterface.OnClickListener {
                 dialog: DialogInterface?, which: Int -> goToMenu()  })
         builder.show()
@@ -268,29 +290,39 @@ class OfflineGameFragment : Fragment() {
     private fun getIndex(top: Int, bottom: Int): Int {
         cardT = cards[top]
         cardB = cards[bottom]
-
+        //Sprawdzanie, które wartości z dwóch tablic się pokrywają
         val help = cardT.filter(cardB::contains).toList()
+        //Zwracanie pierwszej z tych wartości (zawsze jest tylko jedna)
         return help[0]
     }
 
     private fun rotateImg(): Float {
+        //Zwraca losową wartość kątu, o jaki ma być obrócony obrazek
         return Random().nextFloat() * Int.MAX_VALUE % 360
     }
 
     private fun showImages(ind: Int, top: Boolean, bottom: Boolean){
+        //Przypisz do zmiennej jeden z wierszy dużej tablicy 57x8
         card = cards[ind]
+        //Pomieszaj wartości w wierszu
         card.shuffle()
+        //Pętla po wszystkich obrazkach na karcie
         for (i in 0 until 8){
             if (top){
+                //Przypisanie obrazka do ImageView
                 topImages[i].setImageResource(resolveDrawable(card[i]))
+                //Ustawienie widoczności
                 topImages[i].visibility = VISIBLE
+                //Obrot obrazka
                 topImages[i].rotation = rotateImg()
+                //Skala obrazka
                 topImages[i].scaleX = scale[(1 + rotateImg()%8).toInt()]
                 topImages[i].scaleY = topImages[i].scaleX
 
+                //Umiejscowienie na karcie
                 when (i)
                 {
-                    0 -> {  //środek
+                    0 -> {  //środek prawo
                         topImages[i].y = (screenHeight / 4 - topImages[i].height/2).toFloat()
                         topImages[i].x = ((screenWidth / 2 - topImages[i].width/2).toFloat()) + 0.1F * screenWidth
                     }
@@ -449,6 +481,7 @@ class OfflineGameFragment : Fragment() {
         }
     }
 
+    //Funkcja przyjmująca obrazki i przypisująca im indeksy
     fun resolveDrawable(value: Int): Int {
         return when(value) {
             0 -> R.drawable.ziemniaki

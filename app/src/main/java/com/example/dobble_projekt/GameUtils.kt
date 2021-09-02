@@ -15,13 +15,15 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 
 class GameUtils(c: Context?, h: Handler) {
     private var context: Context? = c
     private var handler: Handler? = h
 
-    val MY_UUID: UUID = UUID.randomUUID()
+    val MY_UUID: UUID = UUID.fromString("ea2f5ed7-19f1-4156-b11b-865496134f82")
     val NAME: String = "Dobble projekt"
 
     private var connectThread: ConnectThread? = null
@@ -30,6 +32,7 @@ class GameUtils(c: Context?, h: Handler) {
 
     private var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
+    //Stany połączenia
     val STATE_NONE = 0
     val STATE_LISTEN = 1
     val STATE_CONNECTING = 2
@@ -37,10 +40,12 @@ class GameUtils(c: Context?, h: Handler) {
 
     private var state = STATE_NONE
 
+    //Zwróc stan połączenia
     fun gState(): Int {
         return state
     }
 
+    //Ustaw stan połączenia BT
     @Synchronized fun setState(s: Int){
         this.state = s
         handler?.obtainMessage(OnlineFragmentMenu.MESSAGE_STATE_CHANGED, state, -1)?.sendToTarget()
@@ -110,7 +115,9 @@ class GameUtils(c: Context?, h: Handler) {
         connThread.write(buffer!!)
     }
 
+    //Klasa odpowiedzialna za zaakceptowania połączenia wychodzącego z innego urządzenia
     private inner class AcceptThread : Thread(){
+        //Stworz socket i rozpocznij nasłuchiwanie
         private var serverSocket: BluetoothServerSocket? = try{
             bluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID)
         } catch (e: IOException){
@@ -178,7 +185,6 @@ class GameUtils(c: Context?, h: Handler) {
                 Log.e(TAG,"Connect->CloseSocket")
                 connectionFailed()
                 return
-
             }
 
         @Synchronized

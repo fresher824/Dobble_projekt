@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
+    //Kliknięcie w przycisk "Online Game"
     fun onlineButtonClick(view: View) {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -54,10 +54,11 @@ class MainActivity : AppCompatActivity() {
             findNavController(R.id.fragmentContainerView3).navigate(R.id.action_chooseGameFragment_to_onlineFragmentMenu)
         }
         else {
-            Toast.makeText(this, "No i co tam biedaku?", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Nie można wejść w tę funkcjonalnosć bez zezwolenia na dostęp do lokalizacji. ", Toast.LENGTH_LONG).show()
         }
     }
 
+    //Kliknięcie w przycisk "Offline Game"
     fun offlineButtonClick(view: View) {
         findNavController(R.id.fragmentContainerView3).navigate(R.id.action_chooseGameFragment_to_offlineGameFragment)
     }

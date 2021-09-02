@@ -68,6 +68,7 @@ class OnlineFragmentMenu : Fragment() {
         binding = FragmentOnlineMenuBinding.inflate(inflater, container, false)
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         gameUtils = GameUtils(context, handler)
+        //Sprawdzenie czy bluetooth jest włączony
         if (bluetoothAdapter.isEnabled)
         {
             val img: ImageView = binding.bluetoothView
@@ -144,6 +145,7 @@ class OnlineFragmentMenu : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //Po otrzymaniu adresu z aktywności, wywołaj funkcję mającą połączyć oba urządzenia
         if (requestCode == SELECT_DEVICE && resultCode == RESULT_OK) {
             val address = data?.getStringExtra("deviceAddress")
             gameUtils?.connect(bluetoothAdapter.getRemoteDevice(address))
@@ -154,24 +156,30 @@ class OnlineFragmentMenu : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //Nasluchiwacz obrazka z logo BT
         binding.bluetoothView.setOnClickListener {
             updateBTImage()
         }
+        //Nasluchiwacz przycisku "Create Game"
         binding.createButton.setOnClickListener {
             if (bluetoothAdapter.isEnabled) {
+                //Przekierowanie do aktywności wyboru urządzenia
                 val intent: Intent = Intent(activity, chooseDevice::class.java)
                 startActivityForResult(intent, SELECT_DEVICE)
                 //findNavController().navigate(R.id.action_onlineFragmentMenu_to_deviceListFragment)
             }
+            //Przypomnienie o wlaczeniu BT
             else
                 Snackbar.make(binding.root, "Turn on bluetooth!", Snackbar.LENGTH_LONG).show()
         }
+        //Nasluchiwacz przycisku "Join Game" - ustawienie wykrywalnosci na 5 minut
         binding.joinButton.setOnClickListener {
             val discoverableIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
                 putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
             }
             startActivity(discoverableIntent)
             Toast.makeText(context, "Your device is now discoverable for 300 seconds", Toast.LENGTH_SHORT).show()
+            gameUtils?.start()
         }
 
 
@@ -255,6 +263,7 @@ class OnlineFragmentMenu : Fragment() {
 
     private fun updateBTImage(){
         val img: ImageView = binding.bluetoothView
+        //Przypisz nowy obrazek do ImageView z logo BT
         if (bluetoothAdapter.isEnabled)
         {
             Snackbar.make(binding.root, "Bluetooth is already on", Snackbar.LENGTH_SHORT).show()
@@ -267,6 +276,7 @@ class OnlineFragmentMenu : Fragment() {
         }
     }
 
+    //Wykorzystywany do komunikacji z funkcjami odpowiedzialnymi za przesyłanie danych i łączenie się z innym urządzeniem
     private val handler = Handler { message ->
         when (message.what) {
             MESSAGE_STATE_CHANGED -> when (message.arg1) {
@@ -278,15 +288,18 @@ class OnlineFragmentMenu : Fragment() {
             MESSAGE_WRITE -> {
                 val buffer1 = message.obj as ByteArray
             }
+            //Co się dzieje po odczytaniu wiadomosci przeslanej przez BT
             MESSAGE_READ -> {
                 val buffer = message.obj as ByteArray
                 //val inputBuffer = String(buffer, 0, message.arg1)
             }
+            //Wyswietla toast z nazwą urządzenia, z którym się połączono
             MESSAGE_DEVICE_NAME -> {
                connectedDevice =
                    message.data.getString(DEVICE_NAME)!!
                 Toast.makeText(context, connectedDevice, Toast.LENGTH_SHORT).show()
             }
+            //Wyswietla informację nadaną przez funkcję z gameUtils
             MESSAGE_TOAST -> Toast.makeText(
                 context,
                 message.data.getString(TOAST),
