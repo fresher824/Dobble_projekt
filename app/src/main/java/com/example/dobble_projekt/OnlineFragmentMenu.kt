@@ -179,7 +179,7 @@ class OnlineFragmentMenu : Fragment() {
             }
             startActivity(discoverableIntent)
             Toast.makeText(context, "Your device is now discoverable for 300 seconds", Toast.LENGTH_SHORT).show()
-            gameUtils?.start()
+            gameUtils?.start()  //Rozpocznij nasluchiwanie na proby polaczenia
         }
 
 
@@ -285,9 +285,9 @@ class OnlineFragmentMenu : Fragment() {
                 ChatUtils.STATE_CONNECTING -> setState("Connecting...")
                 ChatUtils.STATE_CONNECTED -> setState("Connected: $connectedDevice")*/
             }
-            MESSAGE_WRITE -> {
+            /*MESSAGE_WRITE -> {
                 val buffer1 = message.obj as ByteArray
-            }
+            }*/
             //Co się dzieje po odczytaniu wiadomosci przeslanej przez BT
             MESSAGE_READ -> {
                 val buffer = message.obj as ByteArray

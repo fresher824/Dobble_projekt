@@ -1,6 +1,5 @@
 package com.example.dobble_projekt
 
-import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -9,16 +8,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
 import com.example.dobble_projekt.databinding.ActivityChooseDeviceBinding
-import com.example.dobble_projekt.databinding.ActivityMainBinding
 import android.widget.TextView
 
-import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 
 
